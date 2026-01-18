@@ -108,6 +108,26 @@ public class CustomerSupportImplmentationTests {
     }
 
     @Test
+    public void testUpdateTicketDetailsResolved() {
+        UpdateSupportTicketRequestDto dto = new UpdateSupportTicketRequestDto();
+        dto.setTicketId(UUID.randomUUID().toString());
+        dto.setAuthPassword("password");
+        dto.setSubject("Should be blocked");
+
+        SupportTicket ticket = new SupportTicket();
+        Customer customer = new Customer();
+        customer.setIdentificationNo("021023-08-1925");
+        ticket.setCustomer(customer);
+        ticket.setStatus(Status.RESOLVED);
+
+        Mockito.when(customerSupportRepository.findById(UUID.fromString(dto.getTicketId())))
+                .thenReturn(Optional.of(ticket));
+        Mockito.when(customerService.verifyLogin("021023-08-1925", "password")).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> customerSupportManagement.reviseTicketDetails(dto));
+    }
+
+    @Test
     public void testUpdateTicketDetailsInvalidLogin() {
         UpdateSupportTicketRequestDto dto = new UpdateSupportTicketRequestDto();
         dto.setTicketId(UUID.randomUUID().toString());
@@ -148,6 +168,22 @@ public class CustomerSupportImplmentationTests {
     }
 
     @Test
+    public void testAssignTicketAlreadyAssigned() {
+        AssignTicketRequestDto dto = new AssignTicketRequestDto();
+        dto.setTicketId(UUID.randomUUID().toString());
+        dto.setAssigneeId("staff-999");
+
+        SupportTicket ticket = new SupportTicket();
+        ticket.setStatus(Status.OPEN);
+        ticket.setAssignedStaffId("staff-123");
+
+        Mockito.when(customerSupportRepository.findById(UUID.fromString(dto.getTicketId())))
+                .thenReturn(Optional.of(ticket));
+
+        assertThrows(IllegalArgumentException.class, () -> customerSupportManagement.allocateTicket(dto));
+    }
+
+    @Test
     public void testUpdateTicketStatus() {
         UpdateTicketStatusRequestDto dto = new UpdateTicketStatusRequestDto();
         dto.setTicketId(UUID.randomUUID().toString());
@@ -166,5 +202,39 @@ public class CustomerSupportImplmentationTests {
         ArgumentCaptor<SupportTicket> captor = ArgumentCaptor.forClass(SupportTicket.class);
         Mockito.verify(customerSupportRepository).save(captor.capture());
         assertEquals(Status.IN_PROGRESS, captor.getValue().getStatus());
+    }
+
+    @Test
+    public void testUpdateTicketStatusUnassigned() {
+        UpdateTicketStatusRequestDto dto = new UpdateTicketStatusRequestDto();
+        dto.setTicketId(UUID.randomUUID().toString());
+        dto.setStatus(Status.IN_PROGRESS);
+        dto.setActionedBy("staff-777");
+
+        SupportTicket ticket = new SupportTicket();
+        ticket.setStatus(Status.OPEN);
+        ticket.setAssignedStaffId(null);
+
+        Mockito.when(customerSupportRepository.findById(UUID.fromString(dto.getTicketId())))
+                .thenReturn(Optional.of(ticket));
+
+        assertThrows(IllegalArgumentException.class, () -> customerSupportManagement.changeTicketStatus(dto));
+    }
+
+    @Test
+    public void testUpdateTicketStatusWrongActor() {
+        UpdateTicketStatusRequestDto dto = new UpdateTicketStatusRequestDto();
+        dto.setTicketId(UUID.randomUUID().toString());
+        dto.setStatus(Status.IN_PROGRESS);
+        dto.setActionedBy("staff-999");
+
+        SupportTicket ticket = new SupportTicket();
+        ticket.setStatus(Status.OPEN);
+        ticket.setAssignedStaffId("staff-777");
+
+        Mockito.when(customerSupportRepository.findById(UUID.fromString(dto.getTicketId())))
+                .thenReturn(Optional.of(ticket));
+
+        assertThrows(IllegalArgumentException.class, () -> customerSupportManagement.changeTicketStatus(dto));
     }
 }
