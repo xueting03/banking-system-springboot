@@ -14,61 +14,73 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wif3006.banking_system.customer.dto.CreateCustomerDto;
 import com.wif3006.banking_system.customer.dto.GetCustomerDto;
 import com.wif3006.banking_system.customer.dto.UpdateCustomerDto;
+import com.wif3006.banking_system.customer.dto.CustomerStatusUpdateDto;
 
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
 
     @Autowired
-    private CustomerManagement customerService;
+    private CustomerImplementation customerService;
 
-    /**
-     * Create a new customer profile.
-     */
+    // Register a customer account
     @PostMapping("/create")
-    public ResponseEntity<String> createProfile(@RequestBody CreateCustomerDto customerDto) {
+    public ResponseEntity<String> registerCustomer(@RequestBody CreateCustomerDto dto) {
         try {
-            customerService.createProfile(customerDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Customer profile created successfully!");
+            customerService.createProfile(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Account registration successful.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating profile: " + e.getMessage());
+                    .body("Failed to register account: " + e.getMessage());
         }
     }
 
-    /**
-     * Retrieve customer profile by ID.
-     */
+    // Fetch customer details using identification number
     @GetMapping("/{identificationNo}")
-    public ResponseEntity<?> getProfile(@PathVariable String identificationNo) {
-        GetCustomerDto customerDto = customerService.getProfile(identificationNo);
-        if (customerDto != null) {
-            return ResponseEntity.ok(customerDto);
+    public ResponseEntity<?> fetchCustomer(@PathVariable String identificationNo) {
+        GetCustomerDto dto = customerService.getProfile(identificationNo);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No customer record found.");
         }
     }
 
-    /**
-     * Update an existing customer profile.
-     */
+    // Modify customer information
     @PatchMapping("/update/{identificationNo}")
-    public ResponseEntity<String> updateProfile(@PathVariable String identificationNo,
-                                                @RequestBody UpdateCustomerDto updatedCustomerDto) {
-        boolean updated = false;
+    public ResponseEntity<String> modifyCustomer(@PathVariable String identificationNo,
+                                                 @RequestBody UpdateCustomerDto updateDto) {
+        boolean result = false;
         try {
-            updated = customerService.updateProfile(identificationNo, updatedCustomerDto);
-            if (updated) {
-                return ResponseEntity.ok("Customer profile updated successfully!");
+            result = customerService.updateProfile(identificationNo, updateDto);
+            if (result) {
+                return ResponseEntity.ok("Customer information has been updated.");
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect current password or customer not found.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Update failed: invalid password or customer missing.");
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating profile: " + e.getMessage());
+                    .body("Unable to update customer: " + e.getMessage());
+        }
+    }
+    // Change customer account status (activate/deactivate)
+    @PatchMapping("/status/{identificationNo}")
+    public ResponseEntity<String> changeCustomerStatus(@PathVariable String identificationNo,
+                                                      @RequestBody CustomerStatusUpdateDto statusDto) {
+        try {
+            statusDto.setIdentificationNo(identificationNo);
+            boolean result = customerService.updateStatus(statusDto);
+            if (result) {
+                return ResponseEntity.ok("Customer status updated to " + statusDto.getStatus() + ".");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unable to update status: " + e.getMessage());
         }
     }
 }

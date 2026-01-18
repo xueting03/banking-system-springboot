@@ -12,14 +12,14 @@ import com.wif3006.banking_system.base.model.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
     /**
-     * Find a customer by their identification number.
-     * This can be useful for additional lookup functionality.
+     * Retrieve a customer entity using the provided identification number.
+     * Useful for searching customers by their government-issued ID.
      */
     Optional<Customer> findByIdentificationNo(String identificationNo);
 
     /**
-     * Find a customer by their phone number.
-     * This can be useful for authentication or other checks.
+     * Lookup a customer record based on their phone number.
+     * Handy for login validation or contact-based queries.
      */
     Optional<Customer> findByPhoneNo(String phoneNo);
 }
