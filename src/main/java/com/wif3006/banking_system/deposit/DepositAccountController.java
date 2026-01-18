@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wif3006.banking_system.base.DepositAccountService;
+import com.wif3006.banking_system.deposit.dto.AccountCredentialsDto;
 import com.wif3006.banking_system.deposit.dto.CloseDepositAccountDto;
 import com.wif3006.banking_system.deposit.dto.CreateDepositAccountDto;
 import com.wif3006.banking_system.deposit.dto.DepositFundsDto;
-import com.wif3006.banking_system.deposit.dto.GetDepositAccountPayloadDto;
 import com.wif3006.banking_system.deposit.dto.UpdateDepositStatusDto;
 import com.wif3006.banking_system.deposit.dto.WithdrawFundsDto;
 
@@ -25,45 +25,45 @@ public class DepositAccountController {
     private DepositAccountService depositAccountService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createAccount(@RequestBody CreateDepositAccountDto createDepositAccountDto) {
+    public ResponseEntity<?> createAccount(@RequestBody CreateDepositAccountDto requestDto) {
         try {
-            depositAccountService.createAccount(createDepositAccountDto);
-            return ResponseEntity.ok("Deposit account created.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
-        } catch (Exception e) {
+            depositAccountService.createAccount(requestDto);
+            return ResponseEntity.ok("Account successfully created.");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Request validation failed: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("Operation conflict: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while creating the deposit account: " + e.getMessage());
+                    .body("Failed to create deposit account: " + ex.getMessage());
         }
     }
 
     @PostMapping("/get/{identificationNo}")
-    public ResponseEntity<?> getAccount(@PathVariable String identificationNo, @RequestBody GetDepositAccountPayloadDto getDepositAccountPayloadDto) {
+    public ResponseEntity<?> getAccount(@PathVariable String identificationNo, @RequestBody AccountCredentialsDto authDto) {
         try {
-            return ResponseEntity.ok(depositAccountService.getAccount(identificationNo, getDepositAccountPayloadDto.getPassword()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (Exception e) {
+            return ResponseEntity.ok(depositAccountService.getAccount(identificationNo, authDto.getPassword()));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Validation error: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while retrieving the deposit account: " + e.getMessage());
+                    .body("Unable to retrieve account information: " + ex.getMessage());
         }
     }
 
     @PatchMapping("/close/{identificationNo}")
     public ResponseEntity<?> closeAccount(@PathVariable String identificationNo,
-            @RequestBody CloseDepositAccountDto closeDepositAccountDto) {
+            @RequestBody CloseDepositAccountDto closureRequest) {
         try {
-            depositAccountService.closeAccount(identificationNo, closeDepositAccountDto.getPassword());
-            return ResponseEntity.ok("Deposit account closed.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
-        } catch (Exception e) {
+            depositAccountService.closeAccount(identificationNo, closureRequest.getPassword());
+            return ResponseEntity.ok("Account closure completed successfully.");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Request processing error: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("State conflict detected: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while closing the deposit account: " + e.getMessage());
+                    .body("Account closure operation failed: " + ex.getMessage());
         }
     }
 
@@ -71,41 +71,41 @@ public class DepositAccountController {
     public ResponseEntity<?> depositFunds(@RequestBody DepositFundsDto depositFundsDto) {
         try {
             return ResponseEntity.ok(depositAccountService.depositFunds(depositFundsDto));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Deposit validation failed: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("Deposit conflict: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while depositing funds: " + e.getMessage());
+                    .body("Deposit funds failed: " + ex.getMessage());
         }
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<?> withdrawFunds(@RequestBody WithdrawFundsDto withdrawFundsDto) {
+    public ResponseEntity<?> withdrawFunds(@RequestBody WithdrawFundsDto withdrawalDto) {
         try {
-            return ResponseEntity.ok(depositAccountService.withdrawFunds(withdrawFundsDto));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
-        } catch (Exception e) {
+            return ResponseEntity.ok(depositAccountService.withdrawFunds(withdrawalDto));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Withdrawal validation error: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("Withdrawal state conflict: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while withdrawing funds: " + e.getMessage());
+                    .body("Withdrawal operation error: " + ex.getMessage());
         }
     }
 
     @PatchMapping("/status")
-    public ResponseEntity<?> updateStatus(@RequestBody UpdateDepositStatusDto updateDepositStatusDto) {
+    public ResponseEntity<?> updateStatus(@RequestBody UpdateDepositStatusDto statusUpdateDto) {
         try {
-            return ResponseEntity.ok(depositAccountService.updateStatus(updateDepositStatusDto));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Invalid request: " + e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
-        } catch (Exception e) {
+            return ResponseEntity.ok(depositAccountService.updateStatus(statusUpdateDto));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body("Status update validation failed: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("Status conflict detected: " + ex.getMessage());
+        } catch (Exception ex) {
             return ResponseEntity.status(500)
-                    .body("An error occurred while updating account status: " + e.getMessage());
+                    .body("Status update operation failed: " + ex.getMessage());
         }
     }
 }

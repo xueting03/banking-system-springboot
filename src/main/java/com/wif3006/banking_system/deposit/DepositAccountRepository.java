@@ -9,6 +9,5 @@ import com.wif3006.banking_system.base.model.DepositAccount;
 
 public interface DepositAccountRepository extends JpaRepository<DepositAccount, UUID> {
     Optional<DepositAccount> findByCustomerId(UUID customerId);
-
     Optional<DepositAccount> findByCustomerIdentificationNo(String identificationNo);
 }
