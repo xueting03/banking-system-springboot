@@ -130,7 +130,7 @@ public class CustomerManagementTests {
         customerDto.setIdentificationNo("021023-08-1925");
         customerDto.setPhoneNo("0183831233");
         customerDto.setAddress("123 Main St");
-        customerDto.setPassword("password");
+        customerDto.setPassword("password1");
 
         customerManagement.createProfile(customerDto);
 
@@ -170,7 +170,7 @@ public class CustomerManagementTests {
         UpdateCustomerDto updateCustomerDto = new UpdateCustomerDto();
         updateCustomerDto.setName("John Smith");
         updateCustomerDto.setCurrentPassword("password");
-        updateCustomerDto.setNewPassword("newPassword");
+        updateCustomerDto.setNewPassword("newPass1");
 
         boolean updated = customerManagement.updateProfile("021023-08-1925", updateCustomerDto);
 
