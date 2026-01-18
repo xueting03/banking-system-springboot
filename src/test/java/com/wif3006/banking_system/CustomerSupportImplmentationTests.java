@@ -17,16 +17,16 @@ import com.wif3006.banking_system.base.model.Customer;
 import com.wif3006.banking_system.base.model.SupportTicket;
 import com.wif3006.banking_system.base.model.SupportTicket.Status;
 import com.wif3006.banking_system.customer.dto.GetCustomerDto;
-import com.wif3006.banking_system.customer_support.CustomerSupportManagement;
+import com.wif3006.banking_system.customer_support.CustomerSupportImplmentation;
 import com.wif3006.banking_system.customer_support.CustomerSupportRepository;
 import com.wif3006.banking_system.customer_support.dto.AssignTicketRequestDto;
 import com.wif3006.banking_system.customer_support.dto.CreateSupportTicketRequestDto;
 import com.wif3006.banking_system.customer_support.dto.UpdateSupportTicketRequestDto;
 import com.wif3006.banking_system.customer_support.dto.UpdateTicketStatusRequestDto;
 
-public class CustomerSupportManagementTests {
+public class CustomerSupportImplmentationTests {
 
-    private CustomerSupportManagement customerSupportManagement;
+    private CustomerSupportImplmentation customerSupportManagement;
     private CustomerSupportRepository customerSupportRepository;
     private CustomerService customerService;
 
@@ -34,13 +34,13 @@ public class CustomerSupportManagementTests {
     public void setUp() throws Exception {
         customerSupportRepository = Mockito.mock(CustomerSupportRepository.class);
         customerService = Mockito.mock(CustomerService.class);
-        customerSupportManagement = new CustomerSupportManagement();
+        customerSupportManagement = new CustomerSupportImplmentation();
 
-        Field repositoryField = CustomerSupportManagement.class.getDeclaredField("customerSupportRepository");
+        Field repositoryField = CustomerSupportImplmentation.class.getDeclaredField("customerSupportRepository");
         repositoryField.setAccessible(true);
         repositoryField.set(customerSupportManagement, customerSupportRepository);
 
-        Field serviceField = CustomerSupportManagement.class.getDeclaredField("customerService");
+        Field serviceField = CustomerSupportImplmentation.class.getDeclaredField("customerService");
         serviceField.setAccessible(true);
         serviceField.set(customerSupportManagement, customerService);
     }

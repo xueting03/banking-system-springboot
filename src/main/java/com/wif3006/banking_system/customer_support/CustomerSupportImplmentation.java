@@ -19,7 +19,7 @@ import com.wif3006.banking_system.customer_support.dto.UpdateTicketStatusRequest
 import jakarta.transaction.Transactional;
 
 @Service
-public class CustomerSupportManagement implements CustomerSupportService {
+public class CustomerSupportImplmentation implements CustomerSupportService {
     @Autowired
     private CustomerSupportRepository customerSupportRepository;
 
