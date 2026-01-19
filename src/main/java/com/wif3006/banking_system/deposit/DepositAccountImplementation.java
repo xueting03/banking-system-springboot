@@ -28,9 +28,6 @@ public class DepositAccountImplementation implements DepositAccountService {
     @Autowired
     private CustomerService customerService;
 
-    /**
-     * Create a new deposit account for the authenticated customer.
-     */
     @Override
     public void createAccount(CreateDepositAccountDto createDepositAccountDto) {
         String customerIdNumber = createDepositAccountDto.getIdentificationNo();
@@ -65,17 +62,14 @@ public class DepositAccountImplementation implements DepositAccountService {
     
     @Override
     public GetDepositAccountDto getAccount(String identificationNo, String password) {
-        // Retrieve deposit account by identification number
         DepositAccount retrievedAccount = depositAccountRepository.findByCustomerIdentificationNo(identificationNo)
                 .orElseThrow(() -> new IllegalArgumentException("No deposit account found for this customer."));
         
-        // Authenticate user credentials
         boolean validCredentials = customerService.verifyLogin(identificationNo, password);
         if (!validCredentials) {
             throw new IllegalArgumentException("Authentication failed. Invalid credentials.");
         }
         
-        // Build response DTO with account details
         GetDepositAccountDto responseDto = new GetDepositAccountDto();
         responseDto.setId(retrievedAccount.getId().toString());
         responseDto.setCustomerId(retrievedAccount.getCustomer().getId().toString());
@@ -87,29 +81,22 @@ public class DepositAccountImplementation implements DepositAccountService {
 
     @Override
     public void closeAccount(String identificationNo, String password) {
-        // Locate the deposit account to be closed
         DepositAccount targetAccount = depositAccountRepository.findByCustomerIdentificationNo(identificationNo)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to locate account with provided credentials."));
         
-        // Verify account is not already in closed state
         if (targetAccount.getStatus() == DepositAccount.Status.CLOSED) {
             throw new IllegalStateException("This account has already been closed.");
         }
         
-        // Authenticate customer before allowing closure
         boolean isAuthorized = customerService.verifyLogin(identificationNo, password);
         if (!isAuthorized) {
             throw new IllegalArgumentException("Authorization failed. Invalid credentials provided.");
         }
         
-        // Update account status to closed and persist
         targetAccount.setStatus(DepositAccount.Status.CLOSED);
         depositAccountRepository.save(targetAccount);
     }
 
-    /**
-     * Processes fund deposit transactions for active accounts.
-     */
     @Override
     @Transactional
     public GetDepositAccountDto depositFunds(DepositFundsDto depositFundsDto) {
@@ -129,7 +116,6 @@ public class DepositAccountImplementation implements DepositAccountService {
         DepositAccount depositAccount = depositAccountRepository.findByCustomerIdentificationNo(customerIdentifier)
                 .orElseThrow(() -> new IllegalArgumentException("Deposit account not located."));
 
-        // Check if account permits deposits
         if (depositAccount.getStatus() == DepositAccount.Status.CLOSED) {
             throw new IllegalStateException("Deposits not permitted for closed accounts.");
         }
@@ -142,9 +128,6 @@ public class DepositAccountImplementation implements DepositAccountService {
         return convertToDto(depositAccount);
     }
 
-    /**
-     * Handles withdrawal transactions from deposit accounts.
-     */
     @Override
     @Transactional
     public GetDepositAccountDto withdrawFunds(WithdrawFundsDto withdrawFundsDto) {
@@ -177,15 +160,11 @@ public class DepositAccountImplementation implements DepositAccountService {
             throw new IllegalArgumentException("Available balance insufficient.");
         }
 
-        // Process withdrawal
         accountRecord.setAmount(accountRecord.getAmount().subtract(withdrawalAmount));
         depositAccountRepository.save(accountRecord);
         return convertToDto(accountRecord);
     }
 
-    /**
-     * Modifies account operational status (FREEZE or UNFREEZE).
-     */
     @Override
     @Transactional
     public GetDepositAccountDto updateStatus(UpdateDepositStatusDto updateDepositStatusDto) {
@@ -209,7 +188,6 @@ public class DepositAccountImplementation implements DepositAccountService {
             throw new IllegalStateException("Status modification not allowed for closed accounts.");
         }
 
-        // Execute requested action
         if (requestedAction.equalsIgnoreCase("FREEZE")) {
             if (accountEntity.getStatus() == DepositAccount.Status.FROZEN) {
                 throw new IllegalStateException("Account is currently frozen.");
@@ -226,9 +204,7 @@ public class DepositAccountImplementation implements DepositAccountService {
         return convertToDto(accountEntity);
     }
 
-    /**
-     * Helper method to convert DepositAccount entity to DTO.
-     */
+    // Helper method to convert DepositAccount entity to DTO.
     private GetDepositAccountDto convertToDto(DepositAccount account) {
         GetDepositAccountDto accountDto = new GetDepositAccountDto();
         accountDto.setId(account.getId().toString());

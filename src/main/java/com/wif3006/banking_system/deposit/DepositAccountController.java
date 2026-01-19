@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wif3006.banking_system.base.DepositAccountService;
-import com.wif3006.banking_system.deposit.dto.AccountCredentialsDto;
 import com.wif3006.banking_system.deposit.dto.CloseDepositAccountDto;
 import com.wif3006.banking_system.deposit.dto.CreateDepositAccountDto;
 import com.wif3006.banking_system.deposit.dto.DepositFundsDto;
 import com.wif3006.banking_system.deposit.dto.UpdateDepositStatusDto;
+import com.wif3006.banking_system.deposit.dto.VerifyAccountCredentialsDto;
 import com.wif3006.banking_system.deposit.dto.WithdrawFundsDto;
 
 @RestController
@@ -40,7 +40,7 @@ public class DepositAccountController {
     }
 
     @PostMapping("/get/{identificationNo}")
-    public ResponseEntity<?> getAccount(@PathVariable String identificationNo, @RequestBody AccountCredentialsDto authDto) {
+    public ResponseEntity<?> getAccount(@PathVariable String identificationNo, @RequestBody VerifyAccountCredentialsDto authDto) {
         try {
             return ResponseEntity.ok(depositAccountService.getAccount(identificationNo, authDto.getPassword()));
         } catch (IllegalArgumentException ex) {
