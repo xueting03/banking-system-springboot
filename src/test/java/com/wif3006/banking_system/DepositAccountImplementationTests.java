@@ -1,6 +1,7 @@
 package com.wif3006.banking_system;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,10 +31,7 @@ import com.wif3006.banking_system.deposit.dto.GetDepositAccountDto;
 import com.wif3006.banking_system.deposit.dto.UpdateDepositStatusDto;
 import com.wif3006.banking_system.deposit.dto.WithdrawFundsDto;
 
-/**
- * Unit tests for DepositAccountImplementation
- * Tests service logic in isolation with mocked dependencies
- */
+//Unit tests for DepositAccountImplementation
 @ExtendWith(MockitoExtension.class)
 public class DepositAccountImplementationTests {
 
@@ -54,13 +52,13 @@ public class DepositAccountImplementationTests {
     }
 
     // Helper method to construct deposit account with specified properties
-    private DepositAccount constructDepositAccount(int balance, DepositAccount.Status accountState) {
+    private DepositAccount constructDepositAccount(BigDecimal balance, DepositAccount.Status accountState) {
         DepositAccount acct = new DepositAccount();
         acct.setId(UUID.randomUUID());
         acct.setCustomer(buildCustomerEntity());
         acct.setAmount(balance);
         acct.setStatus(accountState);
-        acct.setCreatedAt(new Date());
+        acct.setCreatedAt(LocalDateTime.now());
         return acct;
     }
 
@@ -74,7 +72,7 @@ public class DepositAccountImplementationTests {
         // Setup test data
         final String customerId = "030119-08-3006";
         final String userPass = "password";
-        final int initialBalance = 1500;
+        final BigDecimal initialBalance = new BigDecimal("1500");
         
         CreateDepositAccountDto requestDto = new CreateDepositAccountDto();
         requestDto.setIdentificationNo(customerId);
@@ -102,7 +100,7 @@ public class DepositAccountImplementationTests {
         CreateDepositAccountDto createDepositAccountDto = new CreateDepositAccountDto();
         createDepositAccountDto.setIdentificationNo("030119-08-3006");
         createDepositAccountDto.setPassword("password");
-        createDepositAccountDto.setAmount(1000);
+        createDepositAccountDto.setAmount(new BigDecimal("1000"));
 
         when(customerService.verifyLogin("030119-08-3006", "password")).thenReturn(true);
         DepositAccount existingAccount = new DepositAccount();
@@ -123,7 +121,7 @@ public class DepositAccountImplementationTests {
         CreateDepositAccountDto createDepositAccountDto = new CreateDepositAccountDto();
         createDepositAccountDto.setIdentificationNo("030119-08-3006");
         createDepositAccountDto.setPassword("wrongPassword");
-        createDepositAccountDto.setAmount(1000);
+        createDepositAccountDto.setAmount(new BigDecimal("1000"));
 
         when(customerService.verifyLogin("030119-08-3006", "wrongPassword")).thenReturn(false);
 
@@ -140,7 +138,7 @@ public class DepositAccountImplementationTests {
         // Prepare test scenario
         final String userId = "030119-08-3006";
         final String authPass = "password";
-        final int accountBalance = 1000;
+        final BigDecimal accountBalance = new BigDecimal("1000");
 
         DepositAccount existingAccount = constructDepositAccount(accountBalance, DepositAccount.Status.ACTIVE);
 
@@ -157,7 +155,7 @@ public class DepositAccountImplementationTests {
         assertEquals(existingAccount.getCustomer().getId().toString(), resultDto.getCustomerId());
         assertEquals(accountBalance, resultDto.getAmount());
         assertEquals("ACTIVE", resultDto.getStatus());
-        assertEquals(existingAccount.getCreatedAt().toString(), resultDto.getCreatedAt());
+        assertEquals(existingAccount.getCreatedAt(), resultDto.getCreatedAt());
     }
 
     @Test
@@ -171,9 +169,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.ACTIVE);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -192,7 +190,7 @@ public class DepositAccountImplementationTests {
         final String customerRef = "030119-08-3006";
         final String credentials = "password";
 
-        DepositAccount activeAccount = constructDepositAccount(1000, DepositAccount.Status.ACTIVE);
+        DepositAccount activeAccount = constructDepositAccount(new BigDecimal("1000"), DepositAccount.Status.ACTIVE);
 
         // Setup mock responses
         when(depositAccountRepository.findByCustomerIdentificationNo(customerRef)).thenReturn(Optional.of(activeAccount));
@@ -217,9 +215,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.ACTIVE);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -244,9 +242,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.CLOSED);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -265,9 +263,9 @@ public class DepositAccountImplementationTests {
         // Define test constants
         final String accountRef = "030119-08-3006";
         final String authToken = "password";
-        final int startingBalance = 1000;
-        final int depositValue = 200;
-        final int expectedBalance = startingBalance + depositValue;
+        final BigDecimal startingBalance = new BigDecimal("1000");
+        final BigDecimal depositValue = new BigDecimal("200");
+        final BigDecimal expectedBalance = startingBalance.add(depositValue);
 
         DepositAccount targetAccount = constructDepositAccount(startingBalance, DepositAccount.Status.ACTIVE);
 
@@ -300,7 +298,7 @@ public class DepositAccountImplementationTests {
         DepositFundsDto depositFundsDto = new DepositFundsDto();
         depositFundsDto.setIdentificationNo(identificationNo);
         depositFundsDto.setPassword(password);
-        depositFundsDto.setAmount(200);
+        depositFundsDto.setAmount(new BigDecimal("200"));
 
         when(customerService.verifyLogin(identificationNo, password)).thenReturn(false);
 
@@ -321,7 +319,7 @@ public class DepositAccountImplementationTests {
         DepositFundsDto depositFundsDto = new DepositFundsDto();
         depositFundsDto.setIdentificationNo(identificationNo);
         depositFundsDto.setPassword(password);
-        depositFundsDto.setAmount(200);
+        depositFundsDto.setAmount(new BigDecimal("200"));
 
         when(customerService.verifyLogin(identificationNo, password)).thenReturn(true);
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
@@ -346,14 +344,14 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.CLOSED);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         DepositFundsDto depositFundsDto = new DepositFundsDto();
         depositFundsDto.setIdentificationNo(identificationNo);
         depositFundsDto.setPassword(password);
-        depositFundsDto.setAmount(200);
+        depositFundsDto.setAmount(new BigDecimal("200"));
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -378,14 +376,14 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.FROZEN);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         DepositFundsDto depositFundsDto = new DepositFundsDto();
         depositFundsDto.setIdentificationNo(identificationNo);
         depositFundsDto.setPassword(password);
-        depositFundsDto.setAmount(200);
+        depositFundsDto.setAmount(new BigDecimal("200"));
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -408,7 +406,7 @@ public class DepositAccountImplementationTests {
         DepositFundsDto depositFundsDto = new DepositFundsDto();
         depositFundsDto.setIdentificationNo(identificationNo);
         depositFundsDto.setPassword(password);
-        depositFundsDto.setAmount(0);
+        depositFundsDto.setAmount(BigDecimal.ZERO);
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -424,9 +422,9 @@ public class DepositAccountImplementationTests {
         // Test data setup
         final String userIdentifier = "030119-08-3006";
         final String userAuth = "password";
-        final int initialFunds = 1000;
-        final int withdrawAmount = 200;
-        final int remainingFunds = initialFunds - withdrawAmount;
+        final BigDecimal initialFunds = new BigDecimal("1000");
+        final BigDecimal withdrawAmount = new BigDecimal("200");
+        final BigDecimal remainingFunds = initialFunds.subtract(withdrawAmount);
 
         DepositAccount accountEntity = constructDepositAccount(initialFunds, DepositAccount.Status.ACTIVE);
 
@@ -459,7 +457,7 @@ public class DepositAccountImplementationTests {
         WithdrawFundsDto withdrawFundsDto = new WithdrawFundsDto();
         withdrawFundsDto.setIdentificationNo(identificationNo);
         withdrawFundsDto.setPassword(password);
-        withdrawFundsDto.setAmount(200);
+        withdrawFundsDto.setAmount(new BigDecimal("200"));
 
         when(customerService.verifyLogin(identificationNo, password)).thenReturn(false);
 
@@ -482,14 +480,14 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(100);
+        account.setAmount(new BigDecimal("100"));
         account.setStatus(DepositAccount.Status.ACTIVE);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         WithdrawFundsDto withdrawFundsDto = new WithdrawFundsDto();
         withdrawFundsDto.setIdentificationNo(identificationNo);
         withdrawFundsDto.setPassword(password);
-        withdrawFundsDto.setAmount(200);
+        withdrawFundsDto.setAmount(new BigDecimal("200"));
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -514,14 +512,14 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.CLOSED);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         WithdrawFundsDto withdrawFundsDto = new WithdrawFundsDto();
         withdrawFundsDto.setIdentificationNo(identificationNo);
         withdrawFundsDto.setPassword(password);
-        withdrawFundsDto.setAmount(200);
+        withdrawFundsDto.setAmount(new BigDecimal("200"));
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -546,14 +544,14 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.FROZEN);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         WithdrawFundsDto withdrawFundsDto = new WithdrawFundsDto();
         withdrawFundsDto.setIdentificationNo(identificationNo);
         withdrawFundsDto.setPassword(password);
-        withdrawFundsDto.setAmount(200);
+        withdrawFundsDto.setAmount(new BigDecimal("200"));
 
         when(depositAccountRepository.findByCustomerIdentificationNo(identificationNo))
                 .thenReturn(Optional.of(account));
@@ -576,7 +574,7 @@ public class DepositAccountImplementationTests {
         WithdrawFundsDto withdrawFundsDto = new WithdrawFundsDto();
         withdrawFundsDto.setIdentificationNo(identificationNo);
         withdrawFundsDto.setPassword(password);
-        withdrawFundsDto.setAmount(-100);
+        withdrawFundsDto.setAmount(new BigDecimal("-100"));
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -599,9 +597,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.ACTIVE);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         UpdateDepositStatusDto updateStatusDto = new UpdateDepositStatusDto();
         updateStatusDto.setIdentificationNo(identificationNo);
@@ -633,9 +631,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.FROZEN);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         UpdateDepositStatusDto updateStatusDto = new UpdateDepositStatusDto();
         updateStatusDto.setIdentificationNo(identificationNo);
@@ -667,9 +665,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.FROZEN);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         UpdateDepositStatusDto updateStatusDto = new UpdateDepositStatusDto();
         updateStatusDto.setIdentificationNo(identificationNo);
@@ -699,9 +697,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.ACTIVE);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         UpdateDepositStatusDto updateStatusDto = new UpdateDepositStatusDto();
         updateStatusDto.setIdentificationNo(identificationNo);
@@ -752,9 +750,9 @@ public class DepositAccountImplementationTests {
         DepositAccount account = new DepositAccount();
         account.setId(UUID.randomUUID());
         account.setCustomer(customer);
-        account.setAmount(1000);
+        account.setAmount(new BigDecimal("1000"));
         account.setStatus(DepositAccount.Status.CLOSED);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
 
         UpdateDepositStatusDto updateStatusDto = new UpdateDepositStatusDto();
         updateStatusDto.setIdentificationNo(identificationNo);

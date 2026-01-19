@@ -1,12 +1,15 @@
 package com.wif3006.banking_system.deposit.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
 public class GetDepositAccountDto {
     private String id;
     private String customerId;
-    private int amount;
+    private BigDecimal amount;
     private String status;
-    private String createdAt; 
+    private LocalDateTime createdAt; 
 }

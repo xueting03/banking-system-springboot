@@ -1,6 +1,7 @@
 package com.wif3006.banking_system.deposit;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class DepositAccountImplementation implements DepositAccountService {
     public void createAccount(CreateDepositAccountDto createDepositAccountDto) {
         String customerIdNumber = createDepositAccountDto.getIdentificationNo();
         String userPassword = createDepositAccountDto.getPassword();
-        int initialAmount = createDepositAccountDto.getAmount();
+        BigDecimal initialAmount = createDepositAccountDto.getAmount();
 
         // Verify customer credentials before proceeding
         boolean isAuthenticated = customerService.verifyLogin(customerIdNumber, userPassword);
@@ -57,7 +58,7 @@ public class DepositAccountImplementation implements DepositAccountService {
         newAccount.setCustomer(accountOwner);
         newAccount.setAmount(initialAmount);
         newAccount.setStatus(DepositAccount.Status.ACTIVE);
-        newAccount.setCreatedAt(new Date());
+        newAccount.setCreatedAt(LocalDateTime.now());
 
         depositAccountRepository.save(newAccount);
     }
@@ -80,7 +81,7 @@ public class DepositAccountImplementation implements DepositAccountService {
         responseDto.setCustomerId(retrievedAccount.getCustomer().getId().toString());
         responseDto.setAmount(retrievedAccount.getAmount());
         responseDto.setStatus(retrievedAccount.getStatus().toString());
-        responseDto.setCreatedAt(retrievedAccount.getCreatedAt().toString());
+        responseDto.setCreatedAt(retrievedAccount.getCreatedAt());
         return responseDto;
     }
 
@@ -114,10 +115,10 @@ public class DepositAccountImplementation implements DepositAccountService {
     public GetDepositAccountDto depositFunds(DepositFundsDto depositFundsDto) {
         String customerIdentifier = depositFundsDto.getIdentificationNo();
         String accessPassword = depositFundsDto.getPassword();
-        int depositAmount = depositFundsDto.getAmount();
+        BigDecimal depositAmount = depositFundsDto.getAmount();
 
         // Ensure deposit amount is positive
-        if (depositAmount <= 0) {
+        if (depositAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Deposit value must exceed zero.");
         }
 
@@ -136,7 +137,7 @@ public class DepositAccountImplementation implements DepositAccountService {
             throw new IllegalStateException("Deposits blocked on frozen accounts.");
         }
 
-        depositAccount.setAmount(depositAccount.getAmount() + depositAmount);
+        depositAccount.setAmount(depositAccount.getAmount().add(depositAmount));
         depositAccountRepository.save(depositAccount);
         return convertToDto(depositAccount);
     }
@@ -149,10 +150,10 @@ public class DepositAccountImplementation implements DepositAccountService {
     public GetDepositAccountDto withdrawFunds(WithdrawFundsDto withdrawFundsDto) {
         String accountIdentifier = withdrawFundsDto.getIdentificationNo();
         String userPassword = withdrawFundsDto.getPassword();
-        int withdrawalAmount = withdrawFundsDto.getAmount();
+        BigDecimal withdrawalAmount = withdrawFundsDto.getAmount();
 
         // Verify withdrawal amount is valid
-        if (withdrawalAmount <= 0) {
+        if (withdrawalAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Withdrawal value must be positive.");
         }
 
@@ -172,12 +173,12 @@ public class DepositAccountImplementation implements DepositAccountService {
         }
 
         // Check available balance
-        if (accountRecord.getAmount() < withdrawalAmount) {
+        if (accountRecord.getAmount().compareTo(withdrawalAmount) < 0) {
             throw new IllegalArgumentException("Available balance insufficient.");
         }
 
         // Process withdrawal
-        accountRecord.setAmount(accountRecord.getAmount() - withdrawalAmount);
+        accountRecord.setAmount(accountRecord.getAmount().subtract(withdrawalAmount));
         depositAccountRepository.save(accountRecord);
         return convertToDto(accountRecord);
     }
@@ -234,7 +235,7 @@ public class DepositAccountImplementation implements DepositAccountService {
         accountDto.setCustomerId(account.getCustomer().getId().toString());
         accountDto.setAmount(account.getAmount());
         accountDto.setStatus(account.getStatus().toString());
-        accountDto.setCreatedAt(account.getCreatedAt().toString());
+        accountDto.setCreatedAt(account.getCreatedAt());
         return accountDto;
     }
 }
