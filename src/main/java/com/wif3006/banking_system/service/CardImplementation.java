@@ -66,6 +66,7 @@ public class CardImplementation implements CardService {
         card.setStatus(Card.CardStatus.INACTIVE);
         card.setPinNumber(createCardDto.getPinNumber());
         card.setCreatedAt(LocalDateTime.now());
+        card.setCreatedAt(LocalDateTime.now());
         cardRepository.save(card);
     }
 
