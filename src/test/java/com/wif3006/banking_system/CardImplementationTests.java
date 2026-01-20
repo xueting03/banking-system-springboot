@@ -1,28 +1,27 @@
 package com.wif3006.banking_system;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.wif3006.banking_system.base.CustomerService;
-import com.wif3006.banking_system.base.DepositAccountService;
-import com.wif3006.banking_system.base.model.Card;
-import com.wif3006.banking_system.card.CardImplementation;
-import com.wif3006.banking_system.card.CardRepository;
-import com.wif3006.banking_system.card.dto.CreateCardDto;
-import com.wif3006.banking_system.card.dto.GetCardDto;
-import com.wif3006.banking_system.card.dto.UpdateCardLimitDto;
-import com.wif3006.banking_system.card.dto.UpdateCardPinDto;
-import com.wif3006.banking_system.card.dto.UpdateCardStatusDto;
-import com.wif3006.banking_system.deposit.dto.GetDepositAccountDto;
+import com.wif3006.banking_system.dto.card.CreateCardDto;
+import com.wif3006.banking_system.dto.card.GetCardDto;
+import com.wif3006.banking_system.dto.card.UpdateCardLimitDto;
+import com.wif3006.banking_system.dto.card.UpdateCardPinDto;
+import com.wif3006.banking_system.dto.card.UpdateCardStatusDto;
+import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
+import com.wif3006.banking_system.model.Card;
+import com.wif3006.banking_system.repository.CardRepository;
+import com.wif3006.banking_system.service.CardImplementation;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.service.DepositAccountService;
 
 public class CardImplementationTests {
 

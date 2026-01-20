@@ -14,13 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.wif3006.banking_system.base.model.Customer;
-import com.wif3006.banking_system.customer.CustomerImplementation;
-import com.wif3006.banking_system.customer.CustomerRepository;
-import com.wif3006.banking_system.customer.dto.CreateCustomerDto;
-import com.wif3006.banking_system.customer.dto.GetCustomerDto;
-import com.wif3006.banking_system.customer.dto.UpdateCustomerDto;
-import com.wif3006.banking_system.customer.dto.CustomerStatusUpdateDto;
+import com.wif3006.banking_system.model.Customer;
+import com.wif3006.banking_system.service.CustomerImplementation;
+import com.wif3006.banking_system.repository.CustomerRepository;
+import com.wif3006.banking_system.dto.customer.CreateCustomerDto;
+import com.wif3006.banking_system.dto.customer.GetCustomerDto;
+import com.wif3006.banking_system.dto.customer.UpdateCustomerDto;
+import com.wif3006.banking_system.dto.customer.CustomerStatusUpdateDto;
 
 public class CustomerImplementationTests {
     @Test

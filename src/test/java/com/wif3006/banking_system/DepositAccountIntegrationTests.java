@@ -16,18 +16,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.wif3006.banking_system.base.CustomerService;
-import com.wif3006.banking_system.base.model.Customer;
-import com.wif3006.banking_system.base.model.DepositAccount;
-import com.wif3006.banking_system.customer.CustomerRepository;
-import com.wif3006.banking_system.customer.dto.CreateCustomerDto;
-import com.wif3006.banking_system.deposit.DepositAccountImplementation;
-import com.wif3006.banking_system.deposit.DepositAccountRepository;
-import com.wif3006.banking_system.deposit.dto.CreateDepositAccountDto;
-import com.wif3006.banking_system.deposit.dto.DepositFundsDto;
-import com.wif3006.banking_system.deposit.dto.GetDepositAccountDto;
-import com.wif3006.banking_system.deposit.dto.UpdateDepositStatusDto;
-import com.wif3006.banking_system.deposit.dto.WithdrawFundsDto;
+import com.wif3006.banking_system.dto.customer.CreateCustomerDto;
+import com.wif3006.banking_system.dto.deposit.CreateDepositAccountDto;
+import com.wif3006.banking_system.dto.deposit.DepositFundsDto;
+import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
+import com.wif3006.banking_system.dto.deposit.UpdateDepositStatusDto;
+import com.wif3006.banking_system.dto.deposit.WithdrawFundsDto;
+import com.wif3006.banking_system.model.Customer;
+import com.wif3006.banking_system.model.DepositAccount;
+import com.wif3006.banking_system.repository.CustomerRepository;
+import com.wif3006.banking_system.repository.DepositAccountRepository;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.service.DepositAccountImplementation;
 
 @SpringBootTest
 @ActiveProfiles("test")
