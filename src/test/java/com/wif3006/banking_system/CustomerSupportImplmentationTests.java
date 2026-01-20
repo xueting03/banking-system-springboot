@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.wif3006.banking_system.base.CustomerService;
-import com.wif3006.banking_system.base.model.Customer;
-import com.wif3006.banking_system.base.model.SupportTicket;
-import com.wif3006.banking_system.base.model.SupportTicket.Status;
-import com.wif3006.banking_system.customer.dto.GetCustomerDto;
-import com.wif3006.banking_system.customer_support.CustomerSupportImplmentation;
-import com.wif3006.banking_system.customer_support.CustomerSupportRepository;
-import com.wif3006.banking_system.customer_support.dto.AssignTicketRequestDto;
-import com.wif3006.banking_system.customer_support.dto.CreateSupportTicketRequestDto;
-import com.wif3006.banking_system.customer_support.dto.UpdateSupportTicketRequestDto;
-import com.wif3006.banking_system.customer_support.dto.UpdateTicketStatusRequestDto;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.model.Customer;
+import com.wif3006.banking_system.model.SupportTicket;
+import com.wif3006.banking_system.model.SupportTicket.Status;
+import com.wif3006.banking_system.dto.customer.GetCustomerDto;
+import com.wif3006.banking_system.service.CustomerSupportImplmentation;
+import com.wif3006.banking_system.repository.CustomerSupportRepository;
+import com.wif3006.banking_system.dto.support.AssignTicketRequestDto;
+import com.wif3006.banking_system.dto.support.CreateSupportTicketRequestDto;
+import com.wif3006.banking_system.dto.support.UpdateSupportTicketRequestDto;
+import com.wif3006.banking_system.dto.support.UpdateTicketStatusRequestDto;
 
 public class CustomerSupportImplmentationTests {
 

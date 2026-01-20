@@ -12,17 +12,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.wif3006.banking_system.base.CustomerService;
-import com.wif3006.banking_system.base.DepositAccountService;
-import com.wif3006.banking_system.base.model.Card;
-import com.wif3006.banking_system.card.CardImplementation;
-import com.wif3006.banking_system.card.CardRepository;
-import com.wif3006.banking_system.card.dto.CreateCardDto;
-import com.wif3006.banking_system.card.dto.GetCardDto;
-import com.wif3006.banking_system.card.dto.UpdateCardLimitDto;
-import com.wif3006.banking_system.card.dto.UpdateCardPinDto;
-import com.wif3006.banking_system.card.dto.UpdateCardStatusDto;
-import com.wif3006.banking_system.deposit.dto.GetDepositAccountDto;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.service.DepositAccountService;
+import com.wif3006.banking_system.model.Card;
+import com.wif3006.banking_system.service.CardImplementation;
+import com.wif3006.banking_system.repository.CardRepository;
+import com.wif3006.banking_system.dto.card.CreateCardDto;
+import com.wif3006.banking_system.dto.card.GetCardDto;
+import com.wif3006.banking_system.dto.card.UpdateCardLimitDto;
+import com.wif3006.banking_system.dto.card.UpdateCardPinDto;
+import com.wif3006.banking_system.dto.card.UpdateCardStatusDto;
+import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
 
 public class CardImplementationTests {
 

@@ -19,17 +19,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.wif3006.banking_system.base.CustomerService;
-import com.wif3006.banking_system.base.model.Customer;
-import com.wif3006.banking_system.base.model.DepositAccount;
-import com.wif3006.banking_system.customer.dto.GetCustomerDto;
-import com.wif3006.banking_system.deposit.DepositAccountImplementation;
-import com.wif3006.banking_system.deposit.DepositAccountRepository;
-import com.wif3006.banking_system.deposit.dto.CreateDepositAccountDto;
-import com.wif3006.banking_system.deposit.dto.DepositFundsDto;
-import com.wif3006.banking_system.deposit.dto.GetDepositAccountDto;
-import com.wif3006.banking_system.deposit.dto.UpdateDepositStatusDto;
-import com.wif3006.banking_system.deposit.dto.WithdrawFundsDto;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.model.Customer;
+import com.wif3006.banking_system.model.DepositAccount;
+import com.wif3006.banking_system.dto.customer.GetCustomerDto;
+import com.wif3006.banking_system.service.DepositAccountImplementation;
+import com.wif3006.banking_system.repository.DepositAccountRepository;
+import com.wif3006.banking_system.dto.deposit.CreateDepositAccountDto;
+import com.wif3006.banking_system.dto.deposit.DepositFundsDto;
+import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
+import com.wif3006.banking_system.dto.deposit.UpdateDepositStatusDto;
+import com.wif3006.banking_system.dto.deposit.WithdrawFundsDto;
 
 //Unit tests for DepositAccountImplementation
 @ExtendWith(MockitoExtension.class)
