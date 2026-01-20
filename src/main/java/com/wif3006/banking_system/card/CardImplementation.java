@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +61,7 @@ public class CardImplementation implements CardService {
         card.setTransactionLimit(DEFAULT_TRANSACTION_LIMIT);
         card.setStatus(Card.CardStatus.INACTIVE);
         card.setPinNumber(createCardDto.getPinNumber());
-        card.setCreatedAt(new Date());
+        card.setCreatedAt(LocalDateTime.now());
         cardRepository.save(card);
     }
 
@@ -109,6 +110,10 @@ public class CardImplementation implements CardService {
 
         if (!card.getPinNumber().equals(updateCardLimitDto.getPinNumber())) {
             throw new IllegalArgumentException("PIN number is incorrect.");
+        }
+
+        if (card.getStatus() != Card.CardStatus.ACTIVE) {
+            throw new IllegalStateException("Card is not in ACTIVE status and cannot update transaction limit.");
         }
 
         int newLimit = updateCardLimitDto.getNewLimit();
