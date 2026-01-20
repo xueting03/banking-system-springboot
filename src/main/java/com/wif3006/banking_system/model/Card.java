@@ -1,6 +1,6 @@
 package com.wif3006.banking_system.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -50,8 +50,8 @@ public class Card {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
-
+    private LocalDateTime createdAt;
+    
     public enum CardStatus {
         ACTIVE,
         INACTIVE,

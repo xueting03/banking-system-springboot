@@ -1,28 +1,27 @@
 package com.wif3006.banking_system;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.wif3006.banking_system.service.CustomerService;
-import com.wif3006.banking_system.service.DepositAccountService;
-import com.wif3006.banking_system.model.Card;
-import com.wif3006.banking_system.service.CardImplementation;
-import com.wif3006.banking_system.repository.CardRepository;
 import com.wif3006.banking_system.dto.card.CreateCardDto;
 import com.wif3006.banking_system.dto.card.GetCardDto;
 import com.wif3006.banking_system.dto.card.UpdateCardLimitDto;
 import com.wif3006.banking_system.dto.card.UpdateCardPinDto;
 import com.wif3006.banking_system.dto.card.UpdateCardStatusDto;
 import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
+import com.wif3006.banking_system.model.Card;
+import com.wif3006.banking_system.repository.CardRepository;
+import com.wif3006.banking_system.service.CardImplementation;
+import com.wif3006.banking_system.service.CustomerService;
+import com.wif3006.banking_system.service.DepositAccountService;
 
 public class CardImplementationTests {
 
@@ -324,6 +323,7 @@ public class CardImplementationTests {
 
         Card card = new Card();
         card.setPinNumber(pin);
+        card.setStatus(Card.CardStatus.ACTIVE);
         card.setTransactionLimit(1000);
         Mockito.when(cardRepository.findByAccountId(accountId)).thenReturn(Optional.of(card));
 
@@ -358,10 +358,42 @@ public class CardImplementationTests {
 
         Card card = new Card();
         card.setPinNumber(pin);
+        card.setStatus(Card.CardStatus.ACTIVE);
         Mockito.when(cardRepository.findByAccountId(accountId)).thenReturn(Optional.of(card));
 
         // when trigger transaction limit update, then exception is thrown
         assertThrows(IllegalArgumentException.class, () -> cardService.updateCardTransactionLimit(dto));
+    }
+
+    @Test
+    public void testUpdateTransactionLimitInactiveCard() {
+        String idNo = "010101-02-0303";
+        String password = "password";
+        String pin = "123456";
+
+        // given valid update transaction limit request but account is inactive
+        UpdateCardLimitDto dto = new UpdateCardLimitDto();
+        dto.setIdentificationNo(idNo);
+        dto.setPassword(password);
+        dto.setPinNumber(pin);
+        dto.setNewLimit(3000);
+
+        Mockito.when(customerService.verifyLogin(idNo, password)).thenReturn(true);
+
+        UUID accountId = UUID.randomUUID();
+        GetDepositAccountDto depositDto = new GetDepositAccountDto();
+        depositDto.setId(accountId.toString());
+        depositDto.setStatus("ACTIVE");
+        Mockito.when(depositAccountService.getAccount(idNo, password)).thenReturn(depositDto);
+
+        Card card = new Card();
+        card.setPinNumber(pin);
+        card.setStatus(Card.CardStatus.INACTIVE);
+        card.setTransactionLimit(1000);
+        Mockito.when(cardRepository.findByAccountId(accountId)).thenReturn(Optional.of(card));
+
+        // when trigger transaction limit update then exception is thrown
+        assertThrows(IllegalStateException.class, () -> cardService.updateCardTransactionLimit(dto));
     }
 
     @Test

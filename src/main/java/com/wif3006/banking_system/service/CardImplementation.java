@@ -1,17 +1,24 @@
 package com.wif3006.banking_system.service;
 
-import com.wif3006.banking_system.model.Card;
-import com.wif3006.banking_system.model.DepositAccount;
-import com.wif3006.banking_system.repository.CardRepository;
-import com.wif3006.banking_system.dto.card.*;
-import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
-import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import com.wif3006.banking_system.dto.card.CardDto;
+import com.wif3006.banking_system.dto.card.CreateCardDto;
+import com.wif3006.banking_system.dto.card.GetCardDto;
+import com.wif3006.banking_system.dto.card.UpdateCardLimitDto;
+import com.wif3006.banking_system.dto.card.UpdateCardPinDto;
+import com.wif3006.banking_system.dto.card.UpdateCardStatusDto;
+import com.wif3006.banking_system.dto.deposit.GetDepositAccountDto;
+import com.wif3006.banking_system.model.Card;
+import com.wif3006.banking_system.model.DepositAccount;
+import com.wif3006.banking_system.repository.CardRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CardImplementation implements CardService {
@@ -58,7 +65,7 @@ public class CardImplementation implements CardService {
         card.setTransactionLimit(DEFAULT_TRANSACTION_LIMIT);
         card.setStatus(Card.CardStatus.INACTIVE);
         card.setPinNumber(createCardDto.getPinNumber());
-        card.setCreatedAt(new Date());
+        card.setCreatedAt(LocalDateTime.now());
         cardRepository.save(card);
     }
 
@@ -107,6 +114,11 @@ public class CardImplementation implements CardService {
 
         if (!card.getPinNumber().equals(updateCardLimitDto.getPinNumber())) {
             throw new IllegalArgumentException("PIN number is incorrect.");
+        }
+
+
+        if (card.getStatus() != Card.CardStatus.ACTIVE) {
+            throw new IllegalStateException("Card is not in ACTIVE status and cannot update transaction limit.");
         }
 
         int newLimit = updateCardLimitDto.getNewLimit();

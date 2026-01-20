@@ -66,6 +66,8 @@ public class CardController {
             return ResponseEntity.ok("Card transaction limit updated.");
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("Request validation failed: " + ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(409).body("Operation conflict: " + ex.getMessage());
         } catch (Exception ex) {
             return ResponseEntity.status(500).body("Failed to update transaction limit: " + ex.getMessage());
         }
